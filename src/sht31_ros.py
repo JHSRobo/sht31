@@ -10,31 +10,29 @@ sensor = SHT31(0x44)
 
 
 def publisher():
-	pub = rospy.Publisher('rov/sht31', sht31_data, queue_size=3)
-	rospy.init_node('sht31')
-	rate = rospy.Rate(3) #3Hz data read
-	
-	while not rospy.is_shutdown():
-		msg = sht31_data()
-		header = Header()
+    pub = rospy.Publisher('rov/sht31', sht31_data, queue_size=3)
+    rospy.init_node('sht31')
+    rate = rospy.Rate(3)  # 3Hz data read
 
-		sensor.updateValues()
+    while not rospy.is_shutdown():
+        msg = sht31_data()
+        sensor.updateValues()
 
-		msg.tempC = sensor.getTempuratureC()
-		msg.tempF = sensor.getTempuratureF()
-		msg.humidity = sensor.getHumidity()
+        msg.tempC = sensor.getTempuratureC()
+        msg.tempF = sensor.getTempuratureF()
+        msg.humidity = sensor.getHumidity()
 
-		#update message headers
-		header.stamp = rospy.Time.now()
-		header.frame_id = 'humidity_data'
-		msg.header = header
+        # update message headers
+        msg.header.stamp = rospy.Time.now()
+        msg.header.frame_id = 'humidity_data'
 
-		pub.publish(msg)
+        pub.publish(msg)
 
-		rate.sleep()
+        rate.sleep()
+
 
 if __name__ == '__main__':
-	try:
-		publisher()
-	except rospy.ROSInterruptException:
-		pass
+    try:
+        publisher()
+    except rospy.ROSInterruptException:
+        pass
